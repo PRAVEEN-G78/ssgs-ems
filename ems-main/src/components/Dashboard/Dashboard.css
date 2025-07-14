@@ -1,0 +1,512 @@
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Layout */
+.dashboard-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.dashboard-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  background: linear-gradient(45deg, #2196F3 30%, #21CBF3 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Dashboard Top Buttons */
+/* .dashboard-top-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  margin: 32px 0 18px 0;
+  padding: 12px 0;
+  background: linear-gradient(90deg, #e3f2fd 60%, #fff 100%);
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(33, 150, 243, 0.08);
+} */
+.dashboard-top-buttons .button {
+  font-size: 0.98rem;
+  font-weight: 600;
+  padding: 0.5rem 1.2rem;
+  border-radius: 5px;
+  box-shadow: 0 1px 4px rgba(33, 150, 243, 0.08);
+  letter-spacing: 0.2px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.dashboard-top-buttons .button:hover {
+  transform: translateY(-2px) scale(1.04);
+  box-shadow: 0 6px 18px rgba(33, 150, 243, 0.16);
+  z-index: 2;
+}
+
+/* Statistics Cards */
+.stats-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+  animation: fadeIn 0.5s ease-out;
+  transition: 0.3s ease-in-out;
+}
+
+.stat-card:hover {
+  transform: scale(1.02);
+  background-color: #88b2dc;
+}
+
+.stat-icon {
+  animation: pulse 2s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+/* Cards */
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.5s ease-out;
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
+/* Tables */
+.table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+.table tr {
+  animation: slideIn 0.5s ease-out;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.table tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Status Chips */
+.status-chip {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-pending {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.status-approved {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-rejected {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.status-admin {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.status-centre {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+}
+
+/* Buttons */
+.button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.button-primary {
+  background-color: #2196F3;
+  color: white;
+}
+
+.button-primary:hover {
+  background-color: #1976D2;
+}
+
+.button-secondary {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.button-secondary:hover {
+  background-color: #e0e0e0;
+}
+
+/* Dialog */
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialog {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.dialog-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.dialog-content {
+  margin-bottom: 1.5rem;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  margin-top: 50px;
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #2196F3;
+}
+
+/* Icons */
+.icon {
+  font-size: 1.5rem;
+  color: inherit;
+}
+
+.icon-button {
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: #666;
+  transition: color 0.3s ease-in-out;
+}
+
+.icon-button:hover {
+  color: #2196F3;
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 25px;
+}
+
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #2196F3;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.registration-link {
+  transition: background 0.2s, color 0.2s;
+}
+.registration-link:focus {
+  outline: 2px solid #1976D2;
+  outline-offset: 2px;
+}
+
+.document-list-view li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.document-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.document-file-input {
+  display: inline-block;
+  padding: 6px 12px;
+  border-radius: 4px;
+  background: #f5f5f5;
+  border: 1px solid #bdbdbd;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: border 0.2s, background 0.2s;
+}
+.document-file-input:hover {
+  background: #e3f2fd;
+  border: 1px solid #2196F3;
+}
+
+.compact-file-input {
+  height: 28px;
+  font-size: 0.90em;
+  padding: 2px 4px;
+  min-width: 0;
+}
+
+/* Edit Documents Button */
+.edit-documents-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+.edit-documents-btn:hover {
+  background: #125ea2;
+} 
+
+/* Smaller and right-aligned Remove and View Buttons in Edit Documents Modal */
+.doc-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+}
+.remove-doc-btn {
+  background: none;
+  color: #e53935;
+  border: none;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 0;
+  box-shadow: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  transition: color 0.2s, transform 0.1s;
+}
+.remove-doc-btn:hover {
+  color: #b71c1c;
+  background: none;
+  box-shadow: none;
+  transform: scale(1.15);
+}
+.remove-doc-btn .remove-icon {
+  font-size: 1.1em;
+  margin-right: 0;
+  display: inline-block;
+  vertical-align: middle;
+}
+.view-doc-btn {
+  background: #e3e3e3;
+  color: #1976d2;
+  border: none;
+  border-radius: 999px;
+  padding: 3px 12px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  text-decoration: none;
+  margin-left: 0;
+}
+.view-doc-btn:hover {
+  background: #1976d2;
+  color: #fff;
+}
+
+/* Enhanced Save and Cancel Buttons in Edit Documents Modal */
+.edit-doc-save-btn {
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 7px 22px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-right: 8px;
+  box-shadow: 0 2px 8px rgba(67,233,123,0.10);
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+.edit-doc-save-btn:hover {
+  background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
+  box-shadow: 0 4px 16px rgba(67,233,123,0.18);
+  transform: translateY(-2px) scale(1.04);
+}
+.edit-doc-cancel-btn {
+  background: linear-gradient(90deg, #e3e3e3 0%, #bdbdbd 100%);
+  color: #333;
+  border: none;
+  border-radius: 999px;
+  padding: 7px 22px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, transform 0.1s;
+}
+.edit-doc-cancel-btn:hover {
+  background: linear-gradient(90deg, #bdbdbd 0%, #e3e3e3 100%);
+  color: #1976d2;
+  transform: translateY(-2px) scale(1.04);
+} 
+
+.doc-actions, .employee-doc-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+/* For single View button in Employee Details, add a class for future extensibility */
+.view-doc-btn {
+  margin-left: 0;
+  margin-right: 0;
+} 
+
+.highlight-input {
+  border: 2px solid #1976d2 !important;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.18) !important;
+  transition: border 0.2s, box-shadow 0.2s;
+} 

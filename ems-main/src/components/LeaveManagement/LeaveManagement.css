@@ -1,0 +1,287 @@
+/* Layout */
+.leave-management-container {
+  padding: 1.5rem;
+}
+
+.leave-management-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+}
+
+/* Statistics Cards */
+.stats-grid {
+  display: grid;
+  /* grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); */
+  gap: 1.5rem;
+  margin: 2rem;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.stat-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #666;
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.stat-value.pending {
+  color: #f57c00;
+}
+
+.stat-value.approved {
+  color: #2e7d32;
+}
+
+.stat-value.rejected {
+  color: #c62828;
+}
+
+.stat-value.total {
+  color: #2196F3;
+}
+
+/* Attendance Statistics */
+.attendance-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.attendance-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+.attendance-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #666;
+}
+
+.attendance-value {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.attendance-value.present {
+  color: #2e7d32;
+}
+
+.attendance-value.absent {
+  color: #c62828;
+}
+
+.attendance-value.rate {
+  color: #2196F3;
+}
+
+.attendance-subtext {
+  font-size: 0.875rem;
+  color: #666;
+  margin-top: 0.5rem;
+}
+
+/* Leave Requests Table */
+.table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th,
+.table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.table th {
+  background-color: #f5f5f5;
+  font-weight: 600;
+}
+
+.table tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* Status Chips */
+.status-chip {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-pending {
+  background-color: #fff3e0;
+  color: #f57c00;
+}
+
+.status-approved {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-rejected {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.leave-request-btn {
+  background: #1976d2;
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.leave-request-btn:hover {
+  background: #125ea2;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  transition: background 0.2s;
+}
+.modal-fade-in {
+  animation: modalFadeIn 0.25s;
+}
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.modal-content {
+  background: #fff;
+  padding: 32px 24px 24px 24px;
+  border-radius: 10px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.18);
+  min-width: 340px;
+  max-width: 95vw;
+  position: relative;
+}
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #888;
+  cursor: pointer;
+  z-index: 10;
+}
+.modal-close:hover {
+  color: #1976d2;
+} 
+
+/* Enhanced Leave Balance Grid Layout */
+.leave-balance {
+  margin-bottom: 2rem;
+  padding: 1.5rem 0;
+}
+
+.leave-balance-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+  color: #1976d2;
+  letter-spacing: 0.5px;
+  text-align: left;
+}
+
+.leave-balance-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.leave-card {
+  flex: 1 1 260px;
+  min-width: 220px;
+  max-width: 320px;
+  background: linear-gradient(135deg, #e3f2fd 0%, #ffffff 100%);
+  border-radius: 18px;
+  box-shadow: 0 6px 24px rgba(33, 150, 243, 0.10), 0 1.5px 4px rgba(33, 150, 243, 0.08);
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  border-left: 6px solid #1976d2;
+  position: relative;
+  transition: box-shadow 0.25s, transform 0.25s, border-left 0.25s;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: hidden;
+  cursor: pointer;
+}
+.leave-card:hover {
+  box-shadow: 0 12px 32px 0 rgba(33, 150, 243, 0.18), 0 2px 8px rgba(33, 150, 243, 0.10);
+  transform: translateY(-6px) scale(1.04);
+  border-left: 8px solid #f57c00;
+  background: linear-gradient(135deg, #e3f2fd 30%, #fffde7 100%);
+}
+
+.leave-type {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1976d2;
+  letter-spacing: 0.5px;
+}
+
+.leave-detail {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0.5rem;
+  font-size: 1.05rem;
+}
+
+.leave-label {
+  color: #666;
+  font-weight: 500;
+}
+
+@media (max-width: 700px) {
+  .leave-balance-grid {
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .leave-card {
+    max-width: 100%;
+    width: 100%;
+    padding: 1.5rem 1rem 1rem 1rem;
+  }
+} 

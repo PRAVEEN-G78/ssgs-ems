@@ -1,0 +1,197 @@
+.login-bg {
+  min-height: 90vh;
+  /* background: linear-gradient(90deg, rgba(102,126,234,0.7) 0%, rgba(118,75,162,0.7) 100%); */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.8s;
+}
+
+.login-form {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(25, 118, 210, 0.18);
+  padding: 2.5rem 2rem 2rem 2rem;
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  animation: bounceIn 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+}
+
+.login-title {
+  text-align: center;
+  color: #1976d2;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.login-field {
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-field label {
+  font-size: 1rem;
+  color: #1976d2;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+}
+
+.bouncy-input {
+  padding: 0.7rem 1rem;
+  border: 1.5px solid #b3c6e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+  background: #f7fbff;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.04);
+}
+
+.bouncy-input:focus {
+  border: 1.5px solid #1976d2;
+  box-shadow: 0 0 0 2px #1976d2aa;
+  animation: inputBounce 0.3s;
+}
+
+.login-btn {
+  background: linear-gradient(90deg, #1976d2 0%, #42a5f5 100%);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(25, 118, 210, 0.13);
+  transition: transform 0.15s, box-shadow 0.15s;
+  animation: bounceIn 0.7s cubic-bezier(.68,-0.55,.27,1.55);
+}
+
+.bouncy-btn:active {
+  transform: scale(0.96);
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
+}
+
+.login-btn.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.login-error {
+  color: #d32f2f;
+  background: #ffeaea;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.7rem;
+  text-align: center;
+  font-size: 1rem;
+  animation: shake 0.3s;
+}
+
+.login-success {
+  color: #388e3c;
+  background: #e8f5e9;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.7rem;
+  text-align: center;
+  font-size: 1rem;
+  animation: bounceIn 0.5s;
+  font-weight: 600;
+}
+
+.login-footer {
+  margin-top: 1.2rem;
+  text-align: center;
+  font-size: 1rem;
+  color: #1976d2;
+}
+
+.login-link {
+  color: #1976d2;
+  font-weight: 600;
+  margin-left: 0.3rem;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.login-link:hover {
+  color: #0d47a1;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.7);
+    opacity: 0.2;
+  }
+  60% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  80% {
+    transform: scale(0.95);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes inputBounce {
+  0% {
+    transform: scale(1);
+  }
+  60% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.login-spinner {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border: 3px solid #e3e3e3;
+  border-top: 3px solid #1976d2;
+  border-right: 3px solid #42a5f5;
+  border-bottom: 3px solid #7e57c2;
+  border-left: 3px solid #fff;
+  border-radius: 50%;
+  margin-right: 12px;
+  vertical-align: middle;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
+  animation: login-spin 0.7s linear infinite, login-pulse 1.2s ease-in-out infinite alternate;
+}
+
+@keyframes login-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes login-pulse {
+  0% { box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10), 0 0 0 0 #1976d2; }
+  100% { box-shadow: 0 2px 16px rgba(25, 118, 210, 0.18), 0 0 0 6px #1976d222; }
+} 

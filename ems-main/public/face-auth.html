@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Face + Location Auth</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+      h2 {
+        color: #1976D2;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      video {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        border-radius: 8px;
+        margin: 0 auto 20px;
+        display: block;
+      }
+      button {
+        background: #1976D2;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 10px 0;
+        width: 100%;
+        max-width: 400px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      button:hover {
+        background: #1565C0;
+      }
+      button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+      }
+      #status {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 15px;
+        margin-top: 20px;
+        white-space: pre-wrap;
+        font-family: monospace;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+      .loading {
+        color: #1976D2;
+      }
+      .success {
+        color: #28a745;
+      }
+      .error {
+        color: #dc3545;
+      }
+      .warning {
+        color: #ffc107;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>📸 Face + 🗺 Location Authentication</h2>
+      <video id="video" autoplay muted></video>
+      <button onclick="capture()" id="captureBtn">📸 Capture & Validate</button>
+      <button onclick="startCamera()" id="startBtn">🎥 Start Camera</button>
+
+      <h3>🧾 Result:</h3>
+      <pre id="status">Waiting for capture...</pre>
+    </div>
+
+    <script>
+      const video = document.getElementById("video");
+      const status = document.getElementById("status");
+      const captureBtn = document.getElementById("captureBtn");
+      const startBtn = document.getElementById("startBtn");
+      let stream = null;
+
+      // Start webcam
+      async function startCamera() {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { 
+              width: { ideal: 640 },
+              height: { ideal: 480 }
+            } 
+          });
+          video.srcObject = stream;
+          startBtn.style.display = 'none';
+          captureBtn.disabled = false;
+          status.innerText = "✅ Camera started successfully. Click 'Capture & Validate' to proceed.";
+        } catch (err) {
+          status.innerText = "❌ Cannot access webcam: " + err.message;
+          captureBtn.disabled = true;
+        }
+      }
+
+      // Auto-start camera when page loads
+      startCamera();
+
+      async function capture() {
+        if (!stream) {
+          status.innerText = "❌ Camera not started. Please start the camera first.";
+          return;
+        }
+
+        status.innerText = "⏳ Capturing and getting location...";
+        captureBtn.disabled = true;
+
+        try {
+          // Get location
+          let coords;
+          try {
+            coords = await new Promise((resolve, reject) => {
+              navigator.geolocation.getCurrentPosition(
+                (pos) => resolve(pos.coords),
+                (err) => reject("❌ Location denied or failed: " + err.message),
+                { timeout: 10000, enableHighAccuracy: true }
+              );
+            });
+          } catch (err) {
+            status.innerText = err;
+            captureBtn.disabled = false;
+            return;
+          }
+
+          // Capture webcam image
+          const canvas = document.createElement("canvas");
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          canvas.getContext("2d").drawImage(video, 0, 0);
+          const blob = await new Promise((resolve) =>
+            canvas.toBlob(resolve, "image/jpeg", 0.8)
+          );
+
+          const formData = new FormData();
+          formData.append("file", blob, "photo.jpg");
+          formData.append("latitude", coords.latitude);
+          formData.append("longitude", coords.longitude);
+
+          // Send to integrated backend
+          const res = await fetch("http://localhost:5000/api/face-auth/validate", {
+            method: "POST",
+            body: formData,
+          });
+          
+          const result = await res.json();
+
+          if (res.ok) {
+            status.innerText = `
+✅ Face Matched: ${result.face_matched}
+📁 Matched With: ${result.matched_with || "None"}
+🔢 Similarity: ${result.similarity?.toFixed(2) || 0}%
+📍 Within Geo-Fence: ${result.location_ok}
+📏 Distance from center: ${result.distance_m} meters
+🚦 Final Status: ${result.status || "Unknown"}
+${result.note ? `📝 Note: ${result.note}` : ''}
+            `.trim();
+          } else {
+            status.innerText = `❌ Error: ${
+              result.error || result.detail || "Unknown error"
+            }`;
+          }
+        } catch (err) {
+          status.innerText = `❌ Failed to connect to server: ${err.message}`;
+        } finally {
+          captureBtn.disabled = false;
+        }
+      }
+
+      // Clean up stream when page unloads
+      window.addEventListener('beforeunload', () => {
+        if (stream) {
+          stream.getTracks().forEach(track => track.stop());
+        }
+      });
+    </script>
+  </body>
+</html> 
