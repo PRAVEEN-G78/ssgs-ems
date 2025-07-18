@@ -45,14 +45,14 @@ export default function LeaveRequestForm({ onClose }) {
         body: JSON.stringify(leavePayload),
       });
       setResultMessage("Your leave request has been submitted.");
-      setFormData({
-        name: "",
-        employeeId: "",
-        leaveType: "Sick Leave",
-        startDate: "",
-        endDate: "",
-        reason: "",
-      });
+        setFormData({
+          name: "",
+          employeeId: "",
+          leaveType: "Sick Leave",
+          startDate: "",
+          endDate: "",
+          reason: "",
+        });
       if (onClose) onClose();
     } catch (error) {
       setResultMessage("An error occurred. Please try again later.");

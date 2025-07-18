@@ -209,7 +209,7 @@ function EmployeeHome() {
             </div>
             <div className="stat-card">
               <div className="stat-number">0</div>
-              <div className="stat-label">Leave Balance</div>
+              <div className="stat-label">Leave Days </div>
             </div>
             <div className="stat-card">
               <div className="stat-number">0</div>

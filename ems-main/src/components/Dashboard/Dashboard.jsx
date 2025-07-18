@@ -219,18 +219,23 @@ function Dashboard() {
           <li style={{ marginBottom: 24 }}>
             <div style={{ position: 'relative' }}>
               <a href="/leave-tracking" style={{ textDecoration: 'none', color: '#1976d2', fontWeight: 600, fontSize: 18, display: 'flex', alignItems: 'center' }}>
-                <span style={{ marginRight: 6 }}>Leave Tracking</span>
+                <span style={{ marginRight: 6 }}>Leave Management</span>
                 <span style={{ fontSize: 12, color: '#888' }}>▼</span>
               </a>
               <ul style={{ listStyle: 'none', paddingLeft: 24, margin: 0, marginTop: 6, background: '#f0f4fa', borderLeft: '3px solid #1976d2', borderRadius: 4 }}>
                 <li style={{ marginBottom: 8 }}>
-                  <a href="/leave-tracking/daily" style={{ textDecoration: 'none', color: '#1976d2', fontWeight: 500, fontSize: 16, paddingLeft: 8, display: 'block' }}>
-                    Daily Leave Tracking
+                  <a href="/leave-request" style={{ textDecoration: 'none', color: '#1976d2', fontWeight: 500, fontSize: 16, paddingLeft: 8, display: 'block' }}>
+                    Leave Request
+                  </a>
+                </li>
+                <li style={{ marginBottom: 8 }}>
+                  <a href="/leave-tracking/monthly" style={{ textDecoration: 'none', color: '#1976d2', fontWeight: 500, fontSize: 16, paddingLeft: 8, display: 'block' }}>
+                    Monthly Leaves
                   </a>
                 </li>
                 <li>
-                  <a href="/leave-tracking/monthly" style={{ textDecoration: 'none', color: '#1976d2', fontWeight: 500, fontSize: 16, paddingLeft: 8, display: 'block' }}>
-                    Monthly Leave Tracking
+                  <a href="/leave-balances" style={{ textDecoration: 'none', color: '#1976d2', fontWeight: 500, fontSize: 16, paddingLeft: 8, display: 'block' }}>
+                    Leave Balances
                   </a>
                 </li>
               </ul>
@@ -273,14 +278,6 @@ function Dashboard() {
 
           {/* Statistics Overview */}
           <div className="stats-container">
-            {/* <div className="stat-card">
-              <div className="stat-icon">
-                <i className="icon">🏢</i>
-              </div>
-              <div className="stat-value">{centers.length}</div>
-              <div className="stat-label">Total Centers</div>
-            </div> */}
-
             <div className="stat-card">
               <div className="stat-icon">
                 <i className="icon">👥</i>

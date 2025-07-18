@@ -299,4 +299,101 @@
   background-color: #1976d2;
   color: #fff;
   text-decoration: underline;
-} 
+}
+
+/* Pipeline bar for stepper */
+.attractive-stepper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  margin: 32px 0 32px 0;
+  position: relative;
+  background: none;
+}
+
+.attractive-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 0;
+  min-width: 100px;
+  padding: 0 12px;
+  position: relative;
+  z-index: 1;
+  background: none;
+}
+
+.step-label {
+  font-size: 1.08em;
+  font-weight: 500;
+  color: #888;
+  padding-bottom: 6px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-bottom 0.2s;
+  text-align: center;
+  background: none;
+  position: relative;
+  z-index: 2;
+}
+
+.attractive-step.active .step-label {
+  color: #1976d2;
+  font-weight: 700;
+  border-bottom: none;
+  padding: 8px 24px 10px 24px;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.08);
+  transition: background 0.2s, color 0.2s;
+}
+
+.attractive-step.completed .step-label {
+  color: #43a047;
+  border-bottom: 2px solid #43a047;
+  font-weight: 600;
+  background: none;
+}
+
+@media (max-width: 700px) {
+  .attractive-stepper {
+    flex-direction: column;
+    align-items: stretch;
+    margin: 16px 0 16px 0;
+  }
+  .attractive-step {
+    min-width: 0;
+    padding: 8px 0;
+    align-items: flex-start;
+  }
+  .step-label {
+    padding: 10px 16px 10px 16px;
+    font-size: 1em;
+    width: 100%;
+    text-align: left;
+    border-radius: 12px 12px 0 0;
+  }
+  .attractive-step.active .step-label {
+    padding: 12px 20px 12px 20px;
+    font-size: 1.08em;
+    border-radius: 12px 12px 0 0;
+  }
+}
+
+/* Remove step-specific grid colors and backgrounds */
+.form-grid {
+  border: none;
+  border-radius: 0;
+  background: none;
+  padding: 0;
+  margin-bottom: 0;
+  box-shadow: none;
+}
+.attractive-step .step-label {
+  background: none;
+  color: #1976d2;
+  border: none;
+  font-weight: 500;
+}
+.attractive-step.active .step-label {
+  background: none;
+  color: #1976d2;
+  font-weight: 700;
+}

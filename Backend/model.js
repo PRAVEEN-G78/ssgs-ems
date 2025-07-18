@@ -114,7 +114,8 @@ const LeaveSchema = new mongoose.Schema({
   approvedDate: { type: String },
   approvedBy: { type: String },
   duration: { type: Number, required: true },
-  comments: { type: String }
+  comments: { type: String },
+  actionTimestamp: { type: Date }, // Track when status was last changed
 }, { timestamps: true });
 
 // Use employeeDB for Employee model (employeeRecords database)

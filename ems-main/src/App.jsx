@@ -35,6 +35,8 @@ import AdminAttendanceList from './components/Attendance/AdminAttendanceList';
 import MonthlyAttendanceDashboard from './components/Attendance/MonthlyAttendanceDashboard';
 import AdminMonthlyAttendanceDashboard from './components/Attendance/AdminMonthlyAttendanceDashboard';
 import MonthlyLeaveTrackingDashboard from './components/LeaveManagement/MonthlyLeaveTrackingDashboard';
+import LeaveRequestForm from './components/LeaveManagement/LeaveRequestForm';
+import EmployeeID from './components/Employee/EmployeeID';
 
 // Add placeholder components for forgot password forms
 const EmployeeForgotPassword = () => {
@@ -272,11 +274,10 @@ function App() {
         icon: WorkOffIcon,
         path: '/leave',
         description: 'Manage employee leave requests and balances',
-        // subItems: [
-        //   { text: 'Leave Requests', path: '/leave' },
-        //   { text: 'Leave Balance', path: '/leave' },
-        //   { text: 'Calendar', path: '/leave' },
-        // ],
+        subItems: [
+          { text: 'Leave Tracking', path: '/leave-balances' },
+          // { text: 'Monthly Leave Tracking', path: '/leave-tracking/monthly' },
+        ],
       },
     ] : []),
   ];
@@ -311,8 +312,8 @@ function App() {
       path: '/leave-tracking',
       description: 'Track and manage employee leave requests',
       subItems: [
-        { text: 'Daily Leave Tracking', path: '/leave-tracking/daily' },
-        { text: 'Monthly Leave Tracking', path: '/leave-tracking/monthly' },
+        { text: ' Leave Tracking', path: '/leave-tracking/daily' },
+        // { text: ' Monthly Leave Tracking', path: '/leave-tracking/monthly' },
       ],
     },
     {
@@ -342,6 +343,12 @@ function App() {
       icon: GroupAddIcon,
       path: '/employee/login',
       description: 'Login as an employee',
+    },
+    {
+      text: 'Employee ID Generator',
+      icon: GroupAddIcon,
+      path: '/employee-id-generator',
+      description: 'Generate unique employee IDs for new staff',
     },
   ];
 
@@ -585,6 +592,21 @@ function App() {
                   <LeaveManagement />
                 </ProtectedRoute>
               } />
+              <Route path="/leave-request" element={
+                <ProtectedRoute allowedUserTypes={['employee']}>
+                  <LeaveRequestForm />
+                </ProtectedRoute>
+              } />
+              <Route path="/leave-tracking/monthly" element={
+                <ProtectedRoute allowedUserTypes={['employee']}>
+                  <MonthlyLeaveTrackingDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/leave-balances" element={
+                <ProtectedRoute allowedUserTypes={['employee']}>
+                  <LeaveManagement />
+                </ProtectedRoute>
+              } />
               {/* Centre-only routes - TRUE BLOCKING */}
               <Route path="/dashboard" element={
                 <ProtectedRoute allowedUserTypes={['centre']}>
@@ -629,6 +651,12 @@ function App() {
               <Route path="/leave-tracking/monthly" element={
                 <ProtectedRoute allowedUserTypes={['centre']}>
                   <MonthlyLeaveTrackingDashboard />
+                </ProtectedRoute>
+              } />
+              {/* Centre-only route for Employee ID Generator */}
+              <Route path="/employee-id-generator" element={
+                <ProtectedRoute allowedUserTypes={['centre']}>
+                  <EmployeeID />
                 </ProtectedRoute>
               } />
               {/* Admin-only routes - TRUE BLOCKING */}

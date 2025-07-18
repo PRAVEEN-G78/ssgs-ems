@@ -2,6 +2,15 @@ import React, { useState, useEffect } from 'react';
 import './Attendance.css';
 
 function AttendanceTracking() {
+  // Get userType from localStorage for conditional rendering (move to top)
+  const userType = (() => {
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      return user?.userType;
+    } catch {
+      return undefined;
+    }
+  })();
   const [attendanceRecords, setAttendanceRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -28,6 +37,12 @@ function AttendanceTracking() {
 
   // Add state for Monthly View Report modal
   const [showMonthlyReport, setShowMonthlyReport] = useState(false);
+
+  // Add filter type state for center users
+  const [filterType, setFilterType] = useState('date'); // 'date' or 'month'
+
+  // State for showing the monthly report modal
+  const [showMonthlyReportModal, setShowMonthlyReportModal] = useState(false);
 
   // Helper to get all days in the selected month
   function getMonthDays(month) {
@@ -62,14 +77,25 @@ function AttendanceTracking() {
   // Use selectedMonth for filtering
   const filteredMonthRecords = (attendanceRecords.length ? attendanceRecords : demoRecords).filter(r => r.date && r.date.startsWith(selectedMonth));
 
-  // Calculate monthly stats
+  // Filtered records for center users (move this above statsSource)
+  let filteredAttendanceRecords = attendanceRecords.length ? attendanceRecords : demoRecords;
+  if (userType === 'centre') {
+    if (filterType === 'date') {
+      filteredAttendanceRecords = filteredAttendanceRecords.filter(r => r.date && r.date.slice(0, 10) === selectedDate);
+    } else if (filterType === 'month') {
+      filteredAttendanceRecords = filteredAttendanceRecords.filter(r => r.date && r.date.startsWith(selectedMonth));
+    }
+  }
+
+  // Calculate stats based on filteredAttendanceRecords for center users, otherwise use default logic
+  const statsSource = userType === 'centre' ? filteredAttendanceRecords : filteredMonthRecords;
   const stats = {
-    present: filteredMonthRecords.filter(r => r.status === 'Present').length,
-    late: filteredMonthRecords.filter(r => r.status === 'Late').length,
-    absent: filteredMonthRecords.filter(r => r.status === 'Absent').length,
-    leave: filteredMonthRecords.filter(r => r.status === 'On Leave' || r.status === 'Leave').length,
-    halfDay: filteredMonthRecords.filter(r => r.status === 'Half Day').length,
-    totalWorkingHours: filteredMonthRecords.reduce((sum, r) => sum + (r.workingHours || 0), 0),
+    present: statsSource.filter(r => r.status === 'Present').length,
+    late: statsSource.filter(r => r.status === 'Late').length,
+    absent: statsSource.filter(r => r.status === 'Absent').length,
+    leave: statsSource.filter(r => r.status === 'On Leave' || r.status === 'Leave').length,
+    halfDay: statsSource.filter(r => r.status === 'Half Day').length,
+    totalWorkingHours: statsSource.reduce((sum, r) => sum + (r.workingHours || 0), 0),
   };
 
   // Helper to export daily attendance as CSV
@@ -126,21 +152,7 @@ function AttendanceTracking() {
     : recordsToShow.filter(r =>
         r.employeeId && r.employeeId.toLowerCase().includes(employeeIdFilter.trim().toLowerCase())
       );
-  const present = filteredRecords.filter(r => r.status === 'Present').length;
-  const late = filteredRecords.filter(r => r.status === 'Late').length;
-  const absent = filteredRecords.filter(r => r.status === 'Absent').length;
-  const leave = filteredRecords.filter(r => r.status === 'On Leave' || r.status === 'Leave').length;
-  const halfDay = filteredRecords.filter(r => r.status === 'Half Day').length;
-
-  // Get userType from localStorage for conditional rendering
-  const userType = (() => {
-    try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      return user?.userType;
-    } catch {
-      return undefined;
-    }
-  })();
+  // Remove unused present, late, absent, leave, halfDay (now handled by stats)
 
 
   return (
@@ -151,29 +163,38 @@ function AttendanceTracking() {
         <button className="button button-outlined" style={{ marginTop: 8 }} onClick={() => setShowCalendar(true)}>
           <span role="img" aria-label="calendar">📅</span> Calendar View
         </button>
-        {/* Monthly Attendance Dropdown removed */}
+        {/* Monthly Attendance Report Button for center users */}
+        {userType === 'centre' && (
+          <button
+            className="button button-secondary"
+            style={{ marginTop: 8, marginLeft: 12, fontWeight: 600, background: '#1976D2', color: '#fff', border: 'none', borderRadius: 4, padding: '8px 18px' }}
+            onClick={() => setShowMonthlyReportModal(true)}
+          >
+            Monthly Attendance Report
+          </button>
+        )}
       </div>
       <div className="stats-container">
         <div className="stats-grid">
           <div className="stat-card stat-inline">
             <div className="stat-label">Present</div>
-            <div className="stat-value">{present}</div>
+            <div className="stat-value">{stats.present}</div>
           </div>
           <div className="stat-card stat-inline">
             <div className="stat-label">Late</div>
-            <div className="stat-value">{late}</div>
+            <div className="stat-value">{stats.late}</div>
           </div>
           <div className="stat-card stat-inline">
             <div className="stat-label">Absent</div>
-            <div className="stat-value">{absent}</div>
+            <div className="stat-value">{stats.absent}</div>
           </div>
           <div className="stat-card stat-inline">
             <div className="stat-label">Leave</div>
-            <div className="stat-value">{leave}</div>
+            <div className="stat-value">{stats.leave}</div>
           </div>
           <div className="stat-card stat-inline half-day">
             <div className="stat-label">Half Day</div>
-            <div className="stat-value">{halfDay}</div>
+            <div className="stat-value">{stats.halfDay}</div>
           </div>
         </div>
       </div>
@@ -181,15 +202,61 @@ function AttendanceTracking() {
         <div className="records-header">
           <h2 className="records-title"> Attendance Records</h2>
         </div>
-        {/* Employee ID Filter */}
-        <div style={{ marginBottom: '1rem' }}>
-          <input
-            type="text"
-            placeholder="Filter by Employee ID..."
-            value={employeeIdFilter}
-            onChange={e => setEmployeeIdFilter(e.target.value)}
-            style={{ padding: '0.5rem', width: '250px', fontSize: '1rem' }}
-          />
+        {/* Combined Filters Row */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, width: '100%' }}>
+          {/* Employee ID Filter (left) */}
+          <div>
+            <input
+              type="text"
+              placeholder="Filter by Employee ID..."
+              value={employeeIdFilter}
+              onChange={e => setEmployeeIdFilter(e.target.value)}
+              style={{ padding: '0.5rem', width: '250px', fontSize: '1rem' }}
+            />
+          </div>
+          {/* Date/Month Filters for center users (right) */}
+          {userType === 'centre' && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <label htmlFor="filter-type" style={{ fontWeight: 600 }}>Filter By:</label>
+              <select
+                id="filter-type"
+                value={filterType}
+                onChange={e => setFilterType(e.target.value)}
+                style={{ padding: 8, borderRadius: 4, border: '1px solid #1976D2' }}
+              >
+                <option value="date">Date</option>
+                <option value="month">Month</option>
+              </select>
+              {filterType === 'date' && (
+                <>
+                  <label htmlFor="date-filter" style={{ fontWeight: 600 }}>Select Date:</label>
+                  <input
+                    id="date-filter"
+                    type="date"
+                    value={selectedDate}
+                    onChange={e => setSelectedDate(e.target.value)}
+                    style={{ padding: 8, borderRadius: 4, border: '1px solid #1976D2' }}
+                    max={today}
+                  />
+                </>
+              )}
+              {filterType === 'month' && (
+                <>
+                  <label htmlFor="month-filter" style={{ fontWeight: 600 }}>Select Month:</label>
+                  <select
+                    id="month-filter"
+                    value={selectedMonth}
+                    onChange={e => setSelectedMonth(e.target.value)}
+                    style={{ padding: 8, borderRadius: 4, border: '1px solid #1976D2' }}
+                  >
+                    {availableMonths.map(month => (
+                      <option key={month} value={month}>{new Date(month + '-01').toLocaleString('default', { month: 'long', year: 'numeric' })}</option>
+                    ))}
+                  </select>
+                </>
+              )}
+            </div>
+          )}
         </div>
         {loading ? (
           <div>Loading...</div>
@@ -210,7 +277,10 @@ function AttendanceTracking() {
                 </tr>
               </thead>
               <tbody>
-                {filteredRecords.map((record, idx) => (
+                {filteredAttendanceRecords.filter(r =>
+                  employeeIdFilter.trim() === '' ||
+                  (r.employeeId && r.employeeId.toLowerCase().includes(employeeIdFilter.trim().toLowerCase()))
+                ).map((record, idx) => (
                   <tr key={record._id || idx}>
                     <td>{record.employeeId}</td>
                     <td>{record.name || '-'}</td>
@@ -299,7 +369,93 @@ function AttendanceTracking() {
         </div>
       )}
       {/* Monthly View Report Modal */}
-      {/* Removed Monthly View Report modal rendering */}
+      {userType === 'centre' && showMonthlyReportModal && (
+        <div className="modal-overlay modal-fade-in" onClick={() => setShowMonthlyReportModal(false)}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: '95vw', width: '800px' }}>
+            <button className="modal-close" onClick={() => setShowMonthlyReportModal(false)}>&times;</button>
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 12 }}>
+              <h2 style={{ marginBottom: 0, color: '#1976d2', flex: 1 }}>Monthly Attendance Report</h2>
+              <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start' }}>
+                <button
+                  style={{ background: '#388e3c', color: '#fff', border: 'none', borderRadius: 6, padding: '8px 20px', fontWeight: 600, fontSize: 15, cursor: 'pointer' }}
+                  onClick={() => {
+                    const summary = document.getElementById('monthly-attendance-summary-table');
+                    const table = document.getElementById('monthly-attendance-report-table');
+                    if (table && summary) {
+                      const printWindow = window.open('', '', 'width=900,height=700');
+                      printWindow.document.write('<html><head><title>Monthly Attendance Report</title>');
+                      printWindow.document.write('<style>body{font-family:sans-serif;} table{border-collapse:collapse;width:100%;margin-bottom:24px;} th,td{border:1px solid #ccc;padding:8px;} th{background:#f5f5f5;}</style>');
+                      printWindow.document.write('</head><body >');
+                      printWindow.document.write('<h2 style="color:#1976d2;">Monthly Attendance Report</h2>');
+                      printWindow.document.write(summary.outerHTML);
+                      printWindow.document.write(table.outerHTML);
+                      printWindow.document.write('</body></html>');
+                      printWindow.document.close();
+                      printWindow.focus();
+                      printWindow.print();
+                    }
+                  }}
+                >
+                  Print
+                </button>
+              </div>
+            </div>
+            {/* Summary Table for Monthly Stats */}
+            <div style={{ marginBottom: 24 }}>
+              <table id="monthly-attendance-summary-table" className="table" style={{ minWidth: 400, background: '#fff', borderRadius: 6, margin: '0 auto' }}>
+                <thead>
+                  <tr>
+                    <th>Present</th>
+                    <th>Late</th>
+                    <th>Absent</th>
+                    <th>Leave</th>
+                    <th>Half Day</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>{filteredAttendanceRecords.filter(r => r.date && r.date.startsWith(selectedMonth) && r.status === 'Present').length}</td>
+                    <td>{filteredAttendanceRecords.filter(r => r.date && r.date.startsWith(selectedMonth) && r.status === 'Late').length}</td>
+                    <td>{filteredAttendanceRecords.filter(r => r.date && r.date.startsWith(selectedMonth) && r.status === 'Absent').length}</td>
+                    <td>{filteredAttendanceRecords.filter(r => r.date && r.date.startsWith(selectedMonth) && (r.status === 'On Leave' || r.status === 'Leave')).length}</td>
+                    <td>{filteredAttendanceRecords.filter(r => r.date && r.date.startsWith(selectedMonth) && r.status === 'Half Day').length}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div className="table-container" style={{ overflowX: 'auto', overflowY: 'auto', maxWidth: '100%', maxHeight: '60vh' }}>
+              <table className="table" id="monthly-attendance-report-table" style={{ minWidth: '600px' }}>
+                <thead>
+                  <tr>
+                    <th>Employee ID</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th>Check In</th>
+                    <th>Check Out</th>
+                    <th>Status</th>
+                    <th>Working Hours</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredAttendanceRecords
+                    .filter(r => r.date && r.date.startsWith(selectedMonth))
+                    .map((record, idx) => (
+                      <tr key={record._id || idx}>
+                        <td>{record.employeeId}</td>
+                        <td>{record.name || '-'}</td>
+                        <td>{record.date ? record.date.slice(0, 10) : ''}</td>
+                        <td>{record.checkIn || '-'}</td>
+                        <td>{record.checkOut || '-'}</td>
+                        <td>{record.status}</td>
+                        <td>{typeof record.workingHours === 'number' ? record.workingHours : '-'}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -48,6 +48,7 @@ function isSunday(dateStr) {
 
 const MonthlyAttendanceDashboard = () => {
   const [selectedMonth, setSelectedMonth] = useState(months[0].value);
+  const [selectedDate, setSelectedDate] = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
   const [employees, setEmployees] = useState([]);
   const [leaves, setLeaves] = useState([]);
@@ -64,6 +65,11 @@ const MonthlyAttendanceDashboard = () => {
   // Get logged-in employee from localStorage
   const employeeId = user?.employeeId || user?.id;
   const employeeName = user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : '';
+
+  // Debug: Log user info and rendering conditions
+  console.log('user:', user);
+  console.log('isEmployeeUser:', isEmployeeUser);
+  console.log('employeeId:', employeeId);
 
   // Fetch employees and leaves from backend
   useEffect(() => {
@@ -160,6 +166,23 @@ const MonthlyAttendanceDashboard = () => {
   }
   const stats = getAttendanceStats(filteredEmployees, selectedMonth);
 
+  // Calculate paid leave usage and LOP hours for employee users
+  let paidLeaveUsed = 0, paidLeaveTotal = 1, paidLeaveRemaining = 1, lopHours = 0;
+  if (isEmployeeUser && employeeId) {
+    // Count paid leaves (assuming type 'Paid' or 'Annual' or similar)
+    paidLeaveUsed = leaves.filter(l => l.employeeId === employeeId && l.status === 'Approved' && (l.leaveType === 'Paid' || l.leaveType === 'Annual') && l.startDate.slice(0,7) === selectedMonth).length;
+    paidLeaveTotal = 1; // You can update this to fetch from user profile or config if needed
+    paidLeaveRemaining = Math.max(0, paidLeaveTotal - paidLeaveUsed);
+    // Calculate LOP hours (assuming leaveType 'LOP' or status 'LOP')
+    lopHours = leaves.filter(l => l.employeeId === employeeId && l.status === 'Approved' && (l.leaveType === 'LOP' || l.type === 'LOP') && l.startDate.slice(0,7) === selectedMonth).reduce((acc, l) => acc + (l.hours || 8), 0);
+  }
+
+  // Attendance percent for employee user
+  let attendancePercent = 0;
+  if (isEmployeeUser && stats.total > 0) {
+    attendancePercent = Math.round((stats.present / stats.total) * 100);
+  }
+
   // Export to CSV
   const exportCSV = () => {
     let csv = '';
@@ -232,6 +255,12 @@ const MonthlyAttendanceDashboard = () => {
   return (
     <div style={{ padding: 32, maxWidth: 1200, margin: '0 auto' }}>
       <h1 style={{ color: '#1976D2', marginBottom: 24 }}>Monthly Attendance Dashboard</h1>
+      {/* Remove Monthly Leave Tracking Dashboard section for employees */}
+      {false && (
+        <div>
+          {/* Monthly Leave Tracking Dashboard code here (removed) */}
+        </div>
+      )}
       <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 24 }}>
         <label htmlFor="month-select" style={{ fontWeight: 600 }}>Select Month:</label>
         <select id="month-select" value={selectedMonth} onChange={e => setSelectedMonth(e.target.value)} style={{ padding: 8, borderRadius: 4, border: '1px solid #1976D2' }}>
@@ -267,6 +296,42 @@ const MonthlyAttendanceDashboard = () => {
                   {day || ''}
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Power BI style Attendance Percent Visualization for Employee */}
+      {isEmployeeUser && (
+        <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: 32 }}>
+          <div style={{
+            width: 180,
+            height: 180,
+            borderRadius: '50%',
+            background: 'conic-gradient(#1976D2 ' + attendancePercent + '%, #e3f2fd ' + attendancePercent + '% 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 24px rgba(25,118,210,0.10)',
+            position: 'relative',
+          }}>
+            <div style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              background: '#fff',
+              borderRadius: '50%',
+              width: 130,
+              height: 130,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 2px 8px rgba(25,118,210,0.04)',
+            }}>
+              <div style={{ fontSize: 38, fontWeight: 700, color: '#1976D2', lineHeight: 1 }}>{attendancePercent}%</div>
+              <div style={{ fontWeight: 600, color: '#888', fontSize: 18, marginTop: 4 }}>Attendance</div>
+              <div style={{ fontSize: 13, color: '#aaa', marginTop: 2 }}>This Month</div>
             </div>
           </div>
         </div>

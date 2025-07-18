@@ -1433,7 +1433,8 @@ app.put("/api/leave/:id/status", async (req, res) => {
       status,
       approvedBy,
       approvedDate,
-      comments
+      comments,
+      actionTimestamp: new Date() // Set actionTimestamp to now
     };
     const leave = await Leave.findByIdAndUpdate(id, update, { new: true });
     if (!leave) return res.status(404).json({ error: 'Leave request not found' });
@@ -1467,6 +1468,56 @@ app.put("/api/leave/:id/status", async (req, res) => {
     res.json(leave);
   } catch (err) {
     res.status(500).json({ error: "Failed to update leave status" });
+  }
+});
+
+// Change leave status within 1 hour window
+app.put("/api/leave/:id/change-status", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status, approvedBy, approvedDate, comments } = req.body;
+    if (!['Approved', 'Rejected'].includes(status)) {
+      return res.status(400).json({ error: 'Invalid status' });
+    }
+    const leave = await Leave.findById(id);
+    if (!leave) return res.status(404).json({ error: 'Leave request not found' });
+    if (!leave.actionTimestamp) {
+      return res.status(400).json({ error: 'No previous action timestamp found' });
+    }
+    const now = new Date();
+    const diffMs = now - new Date(leave.actionTimestamp);
+    const diffMinutes = diffMs / (1000 * 60);
+    if (diffMinutes > 60) {
+      return res.status(403).json({ error: 'Action change window expired (more than 1 hour)' });
+    }
+    leave.status = status;
+    leave.approvedBy = approvedBy;
+    leave.approvedDate = approvedDate;
+    leave.comments = comments;
+    leave.actionTimestamp = now;
+    await leave.save();
+    res.json(leave);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to change leave status" });
+  }
+});
+
+// Cancel leave request (employee)
+app.put('/api/leave/:id/cancel', async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Optionally, check if the user is the owner (employee) here
+    const leave = await Leave.findById(id);
+    if (!leave) return res.status(404).json({ error: 'Leave request not found' });
+    if (leave.status !== 'Pending') {
+      return res.status(400).json({ error: 'Only pending leave requests can be cancelled' });
+    }
+    leave.status = 'Cancelled';
+    leave.actionTimestamp = new Date();
+    await leave.save();
+    res.json(leave);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to cancel leave request' });
   }
 });
 

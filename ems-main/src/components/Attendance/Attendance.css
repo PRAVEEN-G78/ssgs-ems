@@ -587,3 +587,101 @@
   color: #c62828;
   font-weight: 700;
 } 
+
+/* Improved Paid Leave Balance (This Month) Card Styles */
+.paid-leave-balance-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(33,150,243,0.10);
+  padding: 24px 18px;
+  margin-bottom: 32px;
+  color: #1976d2;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  max-width: 480px;
+  width: 100%;
+  border: 1.5px solid #e3f2fd;
+  transition: box-shadow 0.2s;
+}
+.paid-leave-balance-card .plb-title {
+  font-size: 19px;
+  font-weight: 700;
+  margin-bottom: 18px;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+.paid-leave-balance-card .plb-stats-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 12px;
+}
+.paid-leave-balance-card .plb-stat {
+  flex: 1 1 0;
+  background: #e3f2fd;
+  border-radius: 12px;
+  padding: 16px 8px 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 1px 4px #1565c0;
+  min-width: 0;
+}
+.paid-leave-balance-card .plb-stat:nth-child(1) {
+  background: #e3f2fd; /* Used: blue tint */
+}
+.paid-leave-balance-card .plb-stat:nth-child(2) {
+  background: #e8f5e9; /* Remaining: green tint */
+}
+.paid-leave-balance-card .plb-stat:nth-child(3) {
+  background: #fffde7; /* LOP Hours: yellow tint */
+}
+.paid-leave-balance-card .plb-stat .plb-icon {
+  font-size: 22px;
+  margin-bottom: 6px;
+}
+.paid-leave-balance-card .plb-label {
+  font-size: 15px;
+  opacity: 0.85;
+  margin-bottom: 4px;
+  text-align: center;
+}
+.paid-leave-balance-card .plb-pill {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 700;
+  font-size: 22px;
+  border-radius: 14px;
+  padding: 2px 16px;
+  margin: 0 2px;
+  box-shadow: 0 1px 4px rgba(33,150,243,0.08);
+  display: inline-block;
+}
+.paid-leave-balance-card .plb-divider {
+  width: 1px;
+  background: #e3f2fd;
+  margin: 0 8px;
+  border-radius: 1px;
+}
+@media (max-width: 700px) {
+  .paid-leave-balance-card {
+    max-width: 100%;
+    padding: 14px 4px;
+  }
+  .paid-leave-balance-card .plb-title {
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .paid-leave-balance-card .plb-stats-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .paid-leave-balance-card .plb-stat {
+    padding: 10px 4px 8px 4px;
+  }
+  .paid-leave-balance-card .plb-pill {
+    font-size: 18px;
+    padding: 2px 10px;
+  }
+} 

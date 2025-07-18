@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 // import './LeaveTrackingStats.css';
 
 const demoLeaveData = [
@@ -60,11 +60,40 @@ const cardStyles = {
 };
 
 function MonthlyLeaveTrackingDashboard() {
-  const [selectedMonth, setSelectedMonth] = useState(months[0].value);
+  const user = JSON.parse(localStorage.getItem('user'));
+  const isCenterUser = user?.userType === 'centre';
+  const [selectedMonth, setSelectedMonth] = useState('');
   const [showReport, setShowReport] = useState(false);
+  const [leaveData, setLeaveData] = useState([]); // for center users
+  const [months, setMonths] = useState([]); // for center users
+  const [loading, setLoading] = useState(false);
 
-  // Filter leave data by selected month
-  const filteredLeaves = demoLeaveData.filter(l => l.startDate.startsWith(selectedMonth) || l.endDate.startsWith(selectedMonth));
+  // Fetch leave data and months for center users
+  useEffect(() => {
+    if (isCenterUser) {
+      setLoading(true);
+      fetch('/api/leave')
+        .then(res => res.json())
+        .then(data => {
+          setLeaveData(data);
+          // Extract unique months from leave data
+          const monthSet = new Set();
+          data.forEach(l => {
+            if (l.startDate) monthSet.add(l.startDate.slice(0, 7));
+            if (l.endDate) monthSet.add(l.endDate.slice(0, 7));
+          });
+          const monthArr = Array.from(monthSet).sort().reverse();
+          setMonths(monthArr);
+          setSelectedMonth(monthArr[0] || '');
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [isCenterUser]);
+
+  // For center users, filter leave data by selected month
+  const filteredLeaves = isCenterUser
+    ? leaveData.filter(l => (l.startDate && l.startDate.startsWith(selectedMonth)) || (l.endDate && l.endDate.startsWith(selectedMonth)))
+    : demoLeaveData.filter(l => l.startDate.startsWith(selectedMonth) || l.endDate.startsWith(selectedMonth));
 
   // Calculate statistics for the selected month
   const pendingRequests = filteredLeaves.filter(req => req.status === 'Pending').length;
@@ -72,6 +101,18 @@ function MonthlyLeaveTrackingDashboard() {
   const rejectedRequests = filteredLeaves.filter(req => req.status === 'Rejected').length;
   const totalRequests = filteredLeaves.length;
   const halfDayLeaveRequests = filteredLeaves.filter(req => req.type === 'Half Day').length;
+
+  // Get logged-in employee info
+  const employeeId = user?.employeeId;
+
+  // Calculate leave balance for the employee (demo logic, replace with real data if available)
+  // For demo: 1 paid leave per month, count approved paid leaves (Annual, Casual, Sick, etc.)
+  const paidLeaveTypes = ['Annual Leave', 'Casual Leave', 'Sick Leave'];
+  const used = filteredLeaves.filter(req => req.status === 'Approved' && paidLeaveTypes.includes(req.type)).reduce((sum, req) => sum + (req.duration || 1), 0);
+  const maxPaidLeaves = 1; // Demo: 1 per month
+  const paidLeavesUsed = used > maxPaidLeaves ? maxPaidLeaves : used;
+  const paidLeavesRemaining = Math.max(0, maxPaidLeaves - paidLeavesUsed);
+  const lopHours = used > maxPaidLeaves ? (used - maxPaidLeaves) * 8 : 0; // 8 hours per day
 
   const handlePrint = () => {
     const printWindow = window.open('', '_blank');
@@ -169,17 +210,63 @@ function MonthlyLeaveTrackingDashboard() {
           Leave Reports
         </button>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 24 }}>
-        <label htmlFor="month-select" style={{ fontWeight: 600 }}>Select Month:</label>
-        <select
-          id="month-select"
-          value={selectedMonth}
-          onChange={e => setSelectedMonth(e.target.value)}
-          style={{ padding: 8, borderRadius: 4, border: '1px solid #1976D2' }}
-        >
-          {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
-        </select>
-      </div>
+      {/* Leave Balance Card for Employees */}
+      {user?.userType === "employee" && (
+        <div className="paid-leave-balance-card" style={{ marginBottom: 32 }}>
+          <div className="plb-title">Paid Leave Balance (This Month)</div>
+          <div className="plb-stats-row">
+            <div className="plb-stat">
+              <span className="plb-icon" role="img" aria-label="used">✅</span>
+              <span className="plb-label">Used</span>
+              <span className="plb-pill">{paidLeavesUsed} / {maxPaidLeaves}</span>
+            </div>
+            <div className="plb-stat">
+              <span className="plb-icon" role="img" aria-label="remaining">🟢</span>
+              <span className="plb-label">Remaining</span>
+              <span className="plb-pill" style={{ color: paidLeavesRemaining > 0 ? '#388e3c' : '#d32f2f', background: paidLeavesRemaining > 0 ? '#e8f5e9' : '#fffde7' }}>{paidLeavesRemaining}</span>
+            </div>
+            <div className="plb-stat">
+              <span className="plb-icon" role="img" aria-label="lop">⏰</span>
+              <span className="plb-label">LOP Hours</span>
+              <span className="plb-pill" style={{ color: lopHours > 0 ? '#fbc02d' : '#1976d2', background: lopHours > 0 ? '#fffde7' : '#e3f2fd' }}>{lopHours}</span>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Center user: Month select filter with new label and style */}
+      {isCenterUser && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 24 }}>
+          <label htmlFor="month-select" style={{ fontWeight: 700, color: '#1976D2', fontSize: 18 }}>Select Month to View (Center):</label>
+          <select
+            id="month-select"
+            value={selectedMonth}
+            onChange={e => setSelectedMonth(e.target.value)}
+            style={{ padding: 10, borderRadius: 6, border: '2px solid #1976D2', fontSize: 16, fontWeight: 600, background: '#e3f2fd' }}
+          >
+            {months.map(m => (
+              <option key={m} value={m}>{new Date(m + '-01').toLocaleString('default', { month: 'long', year: 'numeric' })}</option>
+            ))}
+          </select>
+        </div>
+      )}
+      {/* Loading indicator for center users */}
+      {isCenterUser && loading && (
+        <div style={{ textAlign: 'center', color: '#1976d2', fontWeight: 600, marginBottom: 24 }}>Loading leave data...</div>
+      )}
+      {/* Employee: old month select */}
+      {!isCenterUser && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 24 }}>
+          <label htmlFor="month-select" style={{ fontWeight: 600 }}>Select Month:</label>
+          <select
+            id="month-select"
+            value={selectedMonth}
+            onChange={e => setSelectedMonth(e.target.value)}
+            style={{ padding: 8, borderRadius: 4, border: '1px solid #1976D2' }}
+          >
+            {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+          </select>
+        </div>
+      )}
       {/* Statistics Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
         <div style={{ ...cardStyles.base, ...cardStyles.pending }}>

@@ -67,6 +67,9 @@ export const API_ENDPOINTS = {
   UPLOAD_PASSPORT: '/api/upload-passport',
   DELETE_ONBOARDING: '/api/upload',
   DELETE_PASSPORT: '/api/upload-passport',
+
+  // Leave Management
+  LEAVE_CHANGE_STATUS: '/api/leave', // Usage: /api/leave/:id/change-status
 };
 
 // Helper function for API calls

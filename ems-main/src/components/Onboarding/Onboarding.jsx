@@ -610,38 +610,37 @@ function Onboarding() {
               </>
             )}
             <div className="form-group">
+              <label className="form-label">Gender</label>
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleInputChange}
+                className={`form-input ${errors.gender ? "error" : ""}`}
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+              {/* {errors.gender && <div className="error-message">{errors.gender}</div>} */}
+            </div>
+            <div className="form-group">
               <label className="form-label">Blood Group</label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setShowDropdown(true);
-                  }}
-                  onFocus={() => setShowDropdown(true)}
-                  className={`form-input ${errors.bloodGroup ? "error" : ""}`}
-                />
-                {showDropdown && (
-                  <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
-                    {filteredBloodGroups.length > 0 ? (
-                      filteredBloodGroups.map((group) => (
-                        <div
-                          key={group}
-                          className="px-4 py-2 hover:bg-blue-50 cursor-pointer text-sm"
-                          onClick={() => handleBloodGroupSelect(group)}
-                        >
-                          {group}
-                        </div>
-                      ))
-                    ) : (
-                      <div className="px-4 py-2 text-gray-500 text-sm">
-                        No blood groups found
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+              <select
+                name="bloodGroup"
+                value={formData.bloodGroup}
+                onChange={handleInputChange}
+                className={`form-input ${errors.bloodGroup ? "error" : ""}`}
+              >
+                <option value="">Select Blood Group</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </select>
               {/* {errors.bloodGroup && <div className="error-message">{errors.bloodGroup}</div>} */}
             </div>
           </div>
@@ -1025,7 +1024,7 @@ function Onboarding() {
   };
 
   return (
-    <div className="onboarding-container">
+    <div className={`onboarding-container step-${activeStep}`}>
       {loading && <div style={{margin: 16}}>Loading...</div>}
       <div className="onboarding-paper">
         <h1 className="onboarding-title">Employee Onboarding</h1>
@@ -1035,11 +1034,13 @@ function Onboarding() {
         {submitSuccess && (
           <div className="success-message">Form submitted successfully!</div>
         )}
-        <div className="stepper">
+        <div className="stepper attractive-stepper">
           {steps.map((label, index) => (
             <div
               key={label}
-              className={`step ${index === activeStep ? "active" : ""}`}
+              className={`step attractive-step ${index === activeStep ? "active" : ""} ${index < activeStep ? "completed" : ""}`}
+              onClick={() => setActiveStep(index)}
+              style={{ cursor: "pointer" }}
             >
               <div className="step-label">{label}</div>
             </div>
